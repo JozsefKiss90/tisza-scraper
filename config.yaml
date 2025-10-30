@@ -1,0 +1,116 @@
+feeds:
+  # független, politikai fókuszú hírforrások
+  - https://telex.hu/rss
+  - https://444.hu/feed
+  - https://hvg.hu/rss
+  - https://index.hu/24ora/rss/
+  - https://24.hu/feed/
+  - https://rtl.hu/feed
+  - https://www.atv.hu/rss
+  - https://nepszava.hu/rss
+  - https://magyarnarancs.hu/rss
+  - https://hang.hu/rss
+  - https://szabadeuropa.hu/api/zy$ipp$op
+  - https://24.hu/feed/kozelet/
+  - https://g7.hu/feed/
+
+include:
+  any:
+    # fő témák
+    - "politika"
+    - "belpolitika"
+    - "kormány"
+    - "ellenzék"
+    - "parlament"
+    - "országgyűlés"
+    - "választás"
+    - "kampány"
+    - "népszavazás"
+    - "önkormányzati választás"
+    - "EP-választás"
+    - "törvényjavaslat"
+    - "rendelet"
+    - "törvénymódosítás"
+    - "miniszter"
+    - "kormányinfó"
+    - "Nemzeti Választási Iroda"
+    - "választási bizottság"
+    - "koalíció"
+    - "ellenzéki párt"
+    - "pártelnök"
+    - "Tisza Párt"
+    - "Magyar Péter"
+    - "Fidesz"
+    - "KDNP"
+    - "DK"
+    - "Momentum"
+    - "Jobbik"
+    - "Mi Hazánk"
+    - "LMP"
+    - "MSZP"
+    - "Párbeszéd"
+    - "Orbán Viktor"
+    - "Semjén Zsolt"
+    - "Dobrev Klára"
+    - "Márki-Zay Péter"
+    - "Karácsony Gergely"
+    - "Navracsics Tibor"
+    - "Gulyás Gergely"
+    - "Varga Judit"
+    - "Varga Mihály"
+    - "Szijjártó Péter"
+    - "Matolcsy György"
+    - "Tiborcz István"
+
+  all: []  # ha kell, ide jöhetne kötelező együttállás (pl. választás+kampány)
+
+exclude:
+  any:
+    - "sport"
+    - "foci"
+    - "celeb"
+    - "gasztro"
+    - "kultúra"
+    - "film"
+    - "zene"
+    - "játék"
+    - "tech"
+    - "gazdaság"
+    - "vállalkozás"
+    - "makrogazdaság"
+    - "krimi"
+    - "baleset"
+    - "időjárás"
+    - "bulvár"
+    - "életmód"
+    - "egészség"
+    - "utazás"
+
+regex:
+  any:
+    # magyar választási / politikai kontextus
+    - "(önkormányzati|európai\\s+parlamenti|országgyűlési)\\s+választás"
+    - "\\bNVI\\b|\\bNVB\\b"
+    - "\\bT/\\d{3,6}\\b"
+    - "\\brendelet\\b"
+    - "\\btörvényjavaslat\\b"
+    - "\\bkampány\\b"
+    - "\\bkoalíció\\b"
+    - "\\bbelpolitika\\b"
+
+min_length: 160
+store_path: news.sqlite
+
+domain_allowlist:
+  - "telex.hu"
+  - "444.hu"
+  - "hvg.hu"
+  - "index.hu"
+  - "24.hu"
+  - "rtl.hu"
+  - "atv.hu"
+  - "nepszava.hu"
+  - "magyarnarancs.hu"
+  - "hang.hu"
+  - "szabadeuropa.hu"
+  - "g7.hu"

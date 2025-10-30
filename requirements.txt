@@ -1,0 +1,12 @@
+feedparser
+httpx
+trafilatura
+PyYAML
+selectolax
+orjson
+sentence-transformers
+faiss-cpu
+scikit-learn
+pandas
+numpy
+openpyxl
