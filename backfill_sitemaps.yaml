@@ -1,0 +1,36 @@
+sitemaps:
+  # Telex
+  - https://telex.hu/sitemap.xml
+  # 444
+  - https://444.hu/sitemaps/sitemap-index.xml
+  # HVG
+  - https://hvg.hu/sitemap.xml
+  # Index
+  - https://index.hu/sitemap.xml
+  # 24.hu
+  - https://24.hu/sitemaps/sitemap_index.xml
+  # RTL
+  - https://rtl.hu/sitemap.xml
+  # ATV
+  - https://www.atv.hu/sitemap.xml
+  # Népszava
+  - https://nepszava.hu/sitemap.xml
+  # Magyar Narancs
+  - https://magyarnarancs.hu/sitemap.xml
+  - https://telex.hu/sitemap.xml
+  - https://telex.hu/sitemap_index.xml
+  - https://telex.hu/sitemap-index.xml
+  - https://telex.hu/sitemaps/sitemap-index.xml
+  - https://telex.hu/robots.txt   # robots fallback (a script most már ezt is feldolgozza)
+
+
+domain_allowlist:
+  - telex.hu
+  - 444.hu
+  - hvg.hu
+  - index.hu
+  - 24.hu
+  - rtl.hu
+  - atv.hu
+  - nepszava.hu
+  - magyarnarancs.hu
