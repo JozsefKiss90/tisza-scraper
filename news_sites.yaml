@@ -1,0 +1,68 @@
+"444.hu":
+  base_url: "https://444.hu"
+  article_regex: 'https?://444\.hu/(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._%/]+'
+  relative_article_regex: 'href=\"/(20\d{2})/([01]\d)/([0-3]\d)/[^\"]+'
+  archivum:
+    page_template: "https://444.hu/archivum?page={PAGE}"
+  ym:
+    template: "https://444.hu/{YYYY}/{MM:02d}"
+  ymd:
+    template: "https://444.hu/{YYYY}/{MM:02d}/{DD:02d}"
+
+"telex.hu":
+  base_url: "https://telex.hu"
+  article_regex: 'https?://telex\.hu/(?:[a-z0-9\-]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._%/]+'
+  relative_article_regex: 'href=\"/(?:[a-z0-9\-]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[^\"]+'
+  archivum:
+    page_template: "https://telex.hu/archivum?page={PAGE}"
+  ym:
+    template: "https://telex.hu/{YYYY}/{MM:02d}"
+  ymd:
+    template: "https://telex.hu/{YYYY}/{MM:02d}/{DD:02d}"
+
+"index.hu":
+  base_url: "https://index.hu"
+  # rovat + dátum formátumot is engedjük (absz. + relatív minta)
+  article_regex: "https?://index\\.hu/(?:[a-z0-9\\-]+/)?(20\\d{2})/([01]\\d)/([0-3]\\d)/[a-z0-9\\-\\._%/]+"
+  relative_article_regex: "href=\\\"/(?:[a-z0-9\\-]+/)?(20\\d{2})/([01]\\d)/([0-3]\\d)/[^\\\"]+"
+  # <<< EZ A LÉNYEGES VÁLTOZTATÁS: a 24 Óra listát lapozzuk >>>
+  archivum:
+    page_template: "https://index.hu/24ora/?p={PAGE}"
+  # a YM/YMD maradhat tartalék/rásegítésnek
+  ym:
+    template: "https://index.hu/{YYYY}/{MM:02d}"
+  ymd:
+    template: "https://index.hu/{YYYY}/{MM:02d}/{DD:02d}"
+
+"24.hu":
+  base_url: "https://24.hu"
+  article_regex: 'https?://24\.hu/(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._%/]+'
+  relative_article_regex: 'href=\"/(20\d{2})/([01]\d)/([0-3]\d)/[^\"]+'
+  archivum:
+    page_template: "https://24.hu/archivum/page/{PAGE}/"
+  ym:
+    template: "https://24.hu/{YYYY}/{MM:02d}/"
+  ymd:
+    template: "https://24.hu/{YYYY}/{MM:02d}/{DD:02d}/"
+
+"atv.hu":
+  base_url: "https://atv.hu"
+  article_regex: 'https?://atv\.hu/(?:[a-z0-9\-]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._%/]+'
+  relative_article_regex: 'href=\"/(?:[a-z0-9\-]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[^\"]+'
+  archivum:
+    page_template: "https://atv.hu/archivum?page={PAGE}"
+  ym:
+    template: "https://atv.hu/{YYYY}/{MM:02d}"
+  ymd:
+    template: "https://atv.hu/{YYYY}/{MM:02d}/{DD:02d}"
+
+"hvg.hu":
+  base_url: "https://hvg.hu"
+  article_regex: 'https?://hvg\.hu/[a-z0-9\-_/]+/(20\d{2})([01]\d)([0-3]\d)_[a-z0-9\-\._%/]+'
+  relative_article_regex: 'href=\"/[a-z0-9\-_/]+/(20\d{2})([01]\d)([0-3]\d)_[^\"]+'
+  archivum:
+    page_template: "https://hvg.hu/archivum?page={PAGE}"
+  ym:
+    template: ""
+  ymd:
+    template: ""

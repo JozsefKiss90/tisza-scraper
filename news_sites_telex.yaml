@@ -1,0 +1,12 @@
+telex.hu:
+  base_url: "https://telex.hu"
+  archivum:
+    page_template: "https://telex.hu/archivum?oldal={PAGE}"
+
+  # NINCS havi/napi végpont — hagyd ki
+  # ym: {}
+  # ymd: {}
+
+  # Cikk-URL-ek (dátum a pathban)
+  article_regex: "https?://telex\\.hu/(?:[a-z0-9\\-]+/)?(20\\d{2})/([01]\\d)/([0-3]\\d)/[^\\s\"'<>]+"
+  relative_article_regex: "href=[\\'\\\"]/((?:[a-z0-9\\-]+/)?(20\\d{2})/([01]\\d)/([0-3]\\d)/[^\\'\\\"<>]+)[\\'\\\"]"

@@ -309,5 +309,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-python 444_archive_crawler.py --date-from 2023-11-01 --date-to 2025-11-02 --mode auto --sort desc --limit 100 --report-csv 444_top100.csv --print 20

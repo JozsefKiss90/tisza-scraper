@@ -13,3 +13,4 @@ openpyxl
 rapidfuzz
 lxml_html_clean
 pandas
+h2

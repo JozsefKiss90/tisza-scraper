@@ -1,0 +1,14 @@
+hvg.hu:
+  base_url: "https://hvg.hu"
+  archivum:
+    # 1. oldal: https://hvg.hu/frisshirek
+    # 2..N:     https://hvg.hu/frisshirek/{PAGE}
+    page_template: "https://hvg.hu/frisshirek/{PAGE}"
+
+  # HVG cikk-URL minta: /<rovat>/(YYYYMMDD)_<slug>
+  # (példák: /itthon/20251105_A-gyori-..., /gazdasag/20251016_Vasalogep-...,
+  #          /360/20241128_Median-...)
+  article_regex: "https?://hvg\\.hu/(?:[a-z0-9\\-]+/)+(20\\d{2})([01]\\d)([0-3]\\d)_[^\\s\"'<>]+"
+
+  # Relatív linkek a HTML-ben:
+  relative_article_regex: "href=[\\'\\\"]/((?:[a-z0-9\\-]+/)+(20\\d{2})([01]\\d)([0-3]\\d)_[^\\'\\\"<>]+)[\\'\\\"]"
