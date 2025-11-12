@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "news-crawler-mvp"
 version = "0.1.0"
-description = "A unified class system for crawling news articles from various sources."
+description = "A unified news crawler for various sources with customizable search and filtering."
 authors = ["Your Name <youremail@example.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
 httpx = "^0.21.1"
-sqlite3 = "*"
+sqlite3 = { version = "*", optional = true }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -412,6 +412,6 @@ if __name__ == "__main__":
     # app.reembed()
 
     # 3) Keresés
-    hits = app.search("Lázár János", limit=25, order="bm25")
+    hits = app.search("Orbán Viktor", limit=25, order="bm25")
     for i, h in enumerate(hits, 1):
         print(f"{i:02d}. [{h.get('date')}] {h.get('title')} – {h.get('link')}")

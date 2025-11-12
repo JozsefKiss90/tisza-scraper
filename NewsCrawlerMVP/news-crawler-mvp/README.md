@@ -1,52 +1,51 @@
 # News Crawler MVP
 
 ## Overview
-The News Crawler MVP is a Python-based application designed to aggregate news articles from various sources, including 444, Index, HVG, and Telex. It provides a unified interface for crawling, storing, and searching news articles, making it easier to access and analyze news content.
+The News Crawler MVP is a Python-based application designed to aggregate news articles from various sources, including 444, Index, HVG, and Telex. The project aims to provide a unified interface for crawling, storing, and searching news articles, with the potential for further enhancements and customizations.
 
 ## Features
-- **Article Aggregation**: Collects articles from multiple news sources using customizable adapters.
-- **SQLite Repository**: Stores articles in a SQLite database for easy retrieval and management.
-- **Search Engine**: Allows users to search for articles based on keywords, dates, and labels.
-- **Pipeline Architecture**: Facilitates the end-to-end process of crawling, saving, and processing articles.
+- **Crawling**: Automatically fetches articles from specified news sources.
+- **Storage**: Utilizes SQLite for storing article data.
+- **Search**: Implements a search engine with full-text search capabilities.
+- **Extensibility**: Easily add new sources and customize the crawling logic.
 
 ## Installation
-To set up the project, follow these steps:
-
 1. Clone the repository:
    ```
    git clone <repository-url>
    cd news-crawler-mvp
    ```
 
-2. Create a virtual environment (optional but recommended):
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-
-3. Install the required packages:
+2. Install the required dependencies:
    ```
    pip install -r requirements.txt
    ```
 
 ## Usage
 To run the application, execute the following command:
-
 ```
-python src/init_app.py
+python -m news_crawler.cli
 ```
 
-This will initialize the application, crawl articles, and store them in the SQLite database.
+### Example Commands
+- Crawl articles from the last 10 years:
+  ```
+  python -m news_crawler.cli crawl --years 10
+  ```
 
-## Running Tests
-To ensure that the application is functioning correctly, run the tests using:
+- Search for articles containing specific keywords:
+  ```
+  python -m news_crawler.cli search "keyword"
+  ```
 
+## Testing
+To run the tests, use:
 ```
-pytest tests/test_init_app.py
+pytest tests/test_initialization.py
 ```
 
 ## Contributing
 Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License. See the LICENSE file for details.

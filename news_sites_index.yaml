@@ -1,0 +1,13 @@
+"index.hu":
+  base_url: "https://index.hu"
+  # rovat + dátum formátumot is engedjük (absz. + relatív minta)
+  article_regex: "https?://index\\.hu/(?:[a-z0-9\\-]+/)?(20\\d{2})/([01]\\d)/([0-3]\\d)/[a-z0-9\\-\\._%/]+"
+  relative_article_regex: "href=\\\"/(?:[a-z0-9\\-]+/)?(20\\d{2})/([01]\\d)/([0-3]\\d)/[^\\\"]+"
+  # <<< EZ A LÉNYEGES VÁLTOZTATÁS: a 24 Óra listát lapozzuk >>>
+  archivum:
+    page_template: "https://index.hu/24ora/?p={PAGE}"
+  # a YM/YMD maradhat tartalék/rásegítésnek
+  ym:
+    template: "https://index.hu/{YYYY}/{MM:02d}"
+  ymd:
+    template: "https://index.hu/{YYYY}/{MM:02d}/{DD:02d}"
