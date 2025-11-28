@@ -7,43 +7,48 @@ from ..fetcher import Fetcher
 def make_telex_adapter(fetcher: Optional[Fetcher] = None) -> SourceAdapter:
     return RegexArchiveAdapter(
         domain="telex.hu",
-        article_regex=r"https?://telex\.hu/(?:[a-z0-9\-_]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._/]+",
-        page_templates={"archivum": "https://telex.hu/archivum?page={PAGE}"},
+        article_regex=r"https?://telex\.hu/(?:[a-z0-9\-]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[^\"'<>\s]+",
+        page_templates={"archivum": "https://telex.hu/archivum?oldal={PAGE}"},
+        relative_article_regex=r'href=["\']/((?:[a-z0-9\-]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[^"\'<>]+)["\']',
+        base_url="https://telex.hu",
         fetcher=fetcher,
     )
 
 def make_index_adapter(fetcher: Optional[Fetcher] = None) -> SourceAdapter:
+    # Klasszikus index.hu cikk-URL szerkezet: /YYYY/MM/DD/slug
     return RegexArchiveAdapter(
         domain="index.hu",
-        article_regex=r"https?://index\.hu/(?:[a-z0-9\-_]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._/]+",
-        page_templates={"archivum": "https://index.hu/archivum/?p={PAGE}"},
+        article_regex=r"https?://index\.hu/(?:[a-z0-9\-_]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[^\"'<> \t]+",
+        page_templates={"archivum": "https://index.hu/24ora/?p={PAGE}"},
+        relative_article_regex=r'href=["\']/((?:[a-z0-9\-_]+/)?(20\d{2})/([01]\d)/([0-3]\d)/[^"\'<>]+)["\']',
+        base_url="https://index.hu",
         fetcher=fetcher,
     )
 
 def make_444_adapter(fetcher: Optional[Fetcher] = None) -> SourceAdapter:
+    # 444: /YYYY/MM/DD/slug (+ YM/YMD fallbackok, lapozós variánsokkal)
     return RegexArchiveAdapter(
         domain="444.hu",
-        article_regex=r"https?://444\.hu/(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._%/]+",
+        article_regex=r"https?://444\.hu/(20\d{2})/([01]\d)/([0-3]\d)/[^\"'<>% \t]+",
         page_templates={
             "archivum": "https://444.hu/archivum?page={PAGE}",
             "ym":       "https://444.hu/{YYYY}/{MM}",
-            "ym_page":  "https://444.hu/{YYYY}/{MM}?page={PAGE}",        # ÚJ
+            "ym_page":  "https://444.hu/{YYYY}/{MM}?page={PAGE}",
             "ymd":      "https://444.hu/{YYYY}/{MM}/{DD}",
-            "ymd_page": "https://444.hu/{YYYY}/{MM}/{DD}?page={PAGE}",   # ÚJ
+            "ymd_page": "https://444.hu/{YYYY}/{MM}/{DD}?page={PAGE}",
         },
+        relative_article_regex=r'href=["\']/((20\d{2})/([01]\d)/([0-3]\d)/[^"\'<>%]+)["\']',
+        base_url="https://444.hu",
         fetcher=fetcher,
     )
 
 def make_hvg_adapter(fetcher: Optional[Fetcher] = None) -> SourceAdapter:
-    # Lásd a fenti alternációs mintát; ha a YAML-od már bevált, használd azt!
+    # HVG: /<rovat>/<YYYYMMDD>_<slug>  — Friss hírek lista: /frisshirek, /frisshirek/2, /frisshirek/3, ...
     return RegexArchiveAdapter(
         domain="hvg.hu",
-        article_regex=(
-            r"https?://hvg\.hu/(?:[a-z0-9\-_]+/)?("
-            r"(20\d{2})/([01]\d)/([0-3]\d)/[a-z0-9\-\._/]+"
-            r"|[a-z0-9\-_]*?([12]\d{3})[_\-\.]([01]\d)[_\-\.]([0-3]\d)[a-z0-9\-\._/]*"
-            r")"
-        ),
-        page_templates={"archivum": "https://hvg.hu/cimke/arch%C3%ADvum?p={PAGE}"},
+        article_regex=r"https?://hvg\.hu/(?:[a-z0-9\-]+/)+(20\d{2})([01]\d)([0-3]\d)_[^\"'<> \t]+",
+        page_templates={"archivum": "https://hvg.hu/frisshirek/{PAGE}"},
+        relative_article_regex=r'href=["\']/((?:[a-z0-9\-]+/)+(20\d{2})([01]\d)([0-3]\d)_[^"\'<>]+)["\']',
+        base_url="https://hvg.hu",
         fetcher=fetcher,
     )

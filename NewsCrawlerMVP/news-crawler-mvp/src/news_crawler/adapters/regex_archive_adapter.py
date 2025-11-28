@@ -5,6 +5,7 @@ from datetime import datetime, date, timedelta
 from typing import Dict, Iterator, Optional, Tuple, List
 from ..models import Article
 from ..fetcher import Fetcher
+from urllib.parse import urljoin, urlparse, urlunparse
 
 class SourceAdapter(abc.ABC):
     domain: str
@@ -20,42 +21,86 @@ class SourceAdapter(abc.ABC):
     def name(self) -> str: ...
 
 class RegexArchiveAdapter(SourceAdapter):
-    """
-    article_regex:
-        kötelezően (1)=YYYY, (2)=MM, (3)=DD csoportokkal!
-    page_templates:
-        kulcsok közül bármelyik használható:
-          - "archivum": "https://444.hu/archivum?page={PAGE}"
-          - "ym":       "https://444.hu/{YYYY}/{MM}"
-          - "ymd":      "https://444.hu/{YYYY}/{MM}/{DD}"
-    Támogatott környezeti változók:
-        CRAWL_MAX_PAGES (int, alap 200), CRAWL_SLEEP (float, s), CRAWL_VERBOSE (1/0)
-    """
-    def __init__(self, domain: str, article_regex: str, page_templates: Dict[str, str], fetcher: Optional[Fetcher] = None) -> None:
+    def __init__(
+        self,
+        domain: str,
+        article_regex: str,
+        page_templates: Dict[str, str],
+        fetcher: Optional[Fetcher] = None,
+        *, 
+        relative_article_regex: Optional[str] = None,
+        base_url: Optional[str] = None,
+        force_https: bool = True,
+    ) -> None:
         super().__init__(domain, fetcher)
         self._article_re = re.compile(article_regex, re.IGNORECASE)
+        self._rel_re = re.compile(relative_article_regex, re.IGNORECASE) if relative_article_regex else None
         self._pages = page_templates
-        self._max_pages = int(os.getenv("CRAWL_MAX_PAGES", "200"))
-        self._sleep = float(os.getenv("CRAWL_SLEEP", "0.2"))
+        self._max_pages = int(os.getenv("CRAWL_MAX_PAGES", "40"))
+        self._sleep = float(os.getenv("CRAWL_SLEEP", "0.15"))
         self._ym_max_pages  = int(os.getenv("CRAWL_YM_MAX_PAGES",  "8"))
         self._ymd_max_pages = int(os.getenv("CRAWL_YMD_MAX_PAGES", "8"))
+        self._base_url = base_url or f"https://{domain}"
+        self._force_https = force_https
 
-    def name(self) -> str:
-        return f"RegexArchiveAdapter<{self.domain}>"
+    # segédfüggvények:
+    def _canonicalize(self, u: str) -> str:
+        try:
+            pr = urlparse(u)
+            scheme = "https" if self._force_https else (pr.scheme or "https")
+            netloc = pr.netloc.lower()
+            path = pr.path or "/"
+            if path != "/" and path.endswith("/"):
+                path = path.rstrip("/")
+            return urlunparse(pr._replace(scheme=scheme, netloc=netloc, path=path))
+        except Exception:
+            return u
 
-    # --- segédek ---
-    def _extract(self, html: str) -> List[Tuple[str, Optional[str]]]:
-        out: List[Tuple[str, Optional[str]]] = []
+    def _extract_href_value(self, attr: str) -> str:
+        m = re.search(r'href\s*=\s*([\'"])(.*?)\1', attr, re.IGNORECASE)
+        if m:
+            return m.group(2).strip()
+        s = re.sub(r'^\s*href\s*=\s*', '', attr, flags=re.IGNORECASE).strip()
+        if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
+            s = s[1:-1]
+        return s.strip()
+
+    # FONTOS: az _extract egyszerre kezelje az abszolút és relatív egyezéseket
+    # A relatív mintánál elvárjuk a következő csoportokat:
+    # (1)=teljes relatív út, (2)=YYYY, (3)=MM, (4)=DD
+    def _extract(self, html: str) -> list[tuple[str, Optional[str]]]:
+        out: list[tuple[str, Optional[str]]] = []
+        seen: set[str] = set()
+
+        # 1) abszolút URL-ek
         for m in self._article_re.finditer(html or ""):
-            url = m.group(0)
+            url = self._canonicalize(m.group(0))
             pub = None
             try:
                 y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
                 pub = f"{y:04d}-{mo:02d}-{d:02d}"
             except Exception:
                 pass
-            out.append((url, pub))
+            if url not in seen:
+                seen.add(url); out.append((url, pub))
+
+        # 2) relatív URL-ek (ha van minta)
+        if self._rel_re:
+            for m in self._rel_re.finditer(html or ""):
+                pub = None
+                try:
+                    y, mo, d = int(m.group(2)), int(m.group(3)), int(m.group(4))
+                    pub = f"{y:04d}-{mo:02d}-{d:02d}"
+                except Exception:
+                    pass
+                rel = self._extract_href_value(m.group(0))
+                url = self._canonicalize(urljoin(self._base_url.rstrip('/')+'/', rel))
+                if url not in seen:
+                    seen.add(url); out.append((url, pub))
+
         return out
+    def name(self) -> str:
+        return f"RegexArchiveAdapter<{self.domain}>"
 
     def _fetch_text(self, url: str) -> Optional[str]:
         time.sleep(self._sleep)

@@ -49,15 +49,18 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     
     args = parse_args()
-    from datetime import date, timedelta
+    from datetime import date, timedelta 
     
     if args.last_days is not None and not args.date_from:
         start = (datetime.utcnow() - timedelta(days=args.last_days)).date()
         args.date_from = start.isoformat()
     if args.date_from and not args.date_to:
         args.date_to = (date.today() + timedelta(days=1)).isoformat()
-    # App példányosítás a megadott DB-vel
+
+    # Alkalmazás inicializálása
     app = NewsCrawlerMVP(db_path=args.db)
+    if args.domain:
+        app.pipeline.adapters = [ad for ad in app.pipeline.adapters if ad.domain == args.domain]
 
     predicate = None
     preds = []

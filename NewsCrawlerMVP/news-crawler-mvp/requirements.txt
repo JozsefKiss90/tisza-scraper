@@ -3,3 +3,8 @@ sqlite3
 dataclasses-json
 regex
 pytest
+readability-lxml 
+beautifulsoup4
+fastapi 
+uvicorn "pydantic<2"
+bs4
