@@ -21,7 +21,6 @@ import argparse
 import sqlite3
 from pathlib import Path
 
-
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument(

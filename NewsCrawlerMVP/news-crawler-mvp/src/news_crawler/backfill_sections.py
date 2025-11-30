@@ -25,6 +25,11 @@ import argparse
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta, date
+from .AI_tools.ai_tagging import (
+    SimpleHeuristicTagger,
+    HuSpacyNerTopicTagger,
+    tag_article_and_update,
+)
 
 # --- Import: csomagként vagy fallback-kel, ugyanaz a minta mint scrape_archive.py-ben ---
 try:
@@ -82,6 +87,13 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Legfeljebb ennyi cikk tartalmát scrapeli a 2. fázisban (None = mind).",
     )
+    p.add_argument(
+        "--tagger",
+        choices=["heuristic", "huspacy"],
+        default="heuristic",
+        help="AI tagger backend: 'heuristic' (gyorsabb) vagy 'huspacy' (magyar NER + topic).",
+    )
+
     p.add_argument(
         "--verbose",
         "-v",
@@ -210,20 +222,42 @@ def content_backfill_phase(app: NewsCrawlerMVP, args: argparse.Namespace) -> int
         f"[BACKFILL] Tartalom backfill indul: {len(rows)} cikk (jelölt: {total_candidates}, limit: {args.max_articles})"
     )
 
-    done = 0
+    # Tagger választása CLI alapján
+    if getattr(args, "tagger", "heuristic") == "huspacy":
+        tagger = HuSpacyNerTopicTagger()
+        if args.verbose:
+            print("[BACKFILL] HuSpaCy NER+topic tagger lesz használva.")
+    else:
+        tagger = SimpleHeuristicTagger()
+        if args.verbose:
+            print("[BACKFILL] Heurisztikus (offline) tagger lesz használva.")
+
+
+    ok = 0
     for i, row in enumerate(rows, 1):
         url = row["url"]
         try:
             art = app.repo.get_or_fetch_article(url, fetcher=app.fetcher)
-            done += 1
+            clen = len(art.content or "")
             if args.verbose:
-                content_len = len(art.content or "")
-                print(f"[CONTENT {i:05d}] OK len={content_len:5d}  {url}")
-        except Exception as e:
-            print(f"[CONTENT {i:05d}] HIBA {url} -> {e}")
+                print(f"[CONTENT {i:05d}] OK len={clen:5d}  {url}")
 
-    print(f"[BACKFILL] Tartalom backfill kész, sikeres scrapelés: {done} cikk.")
-    return done
+            # 🔹 ÚJ: AI tagging + DB update
+            tagging = tag_article_and_update(app.repo, art, tagger)
+            if args.verbose:
+                # csak rövid infó, ne legyen spam
+                print(f"[TAG   {i:05d}] topics={tagging.topics} "
+                      f"keywords={tagging.keywords[:5]}")
+
+            ok += 1
+
+        except Exception as e:
+            # meglévő HIBA log marad
+            if args.verbose:
+                print(f"[CONTENT {i:05d}] HIBA {url} -> {e}")
+            # stb.
+
+    return ok
 
 
 def main() -> None:
@@ -256,3 +290,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

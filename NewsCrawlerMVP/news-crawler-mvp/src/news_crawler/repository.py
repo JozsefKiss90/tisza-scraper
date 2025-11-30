@@ -419,8 +419,11 @@ class Repository:
         date_from: Optional[str] = None,
         date_to: Optional[str] = None,
         q: Optional[str] = None,
+        topic: Optional[str] = None,  
+        entity: Optional[str] = None,     # ÚJ
+        keyword: Optional[str] = None,    # ÚJ
         limit: int = 200,
-    ) -> List[Dict[str, Any]]:
+    ):
         """
         Egyszerű meta-alapú keresés:
 
@@ -453,6 +456,18 @@ class Repository:
         if date_to:
             where.append("a.published_date <= ?")
             params.append(date_to)
+
+        if topic:
+            where.append("a.tags LIKE ?")
+            params.append(f"%{topic}%")
+        if entity:
+            # JSON-ben így szerepel: "text": "Orbán Viktor"
+            where.append("a.matched_tags LIKE ?")
+            params.append(f'%\"text\": \"{entity}\"%')
+
+        if keyword:
+            where.append("a.tags LIKE ?")
+            params.append(f"%{keyword}%")
 
         import unicodedata  # a file tetején már legyen importálva
 

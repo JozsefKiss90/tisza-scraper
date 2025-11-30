@@ -110,24 +110,16 @@ async def health() -> dict:
 # -------------------------------------------------
 @app.get("/api/search", response_model=List[SearchResult])
 async def search_db(
-    q: Optional[str] = Query(
-        None,
-        description="Opcionális kulcsszó (title/content LIKE) az adatbázisban.",
-    ),
-    domain: Optional[str] = Query(
-        None,
-        description="Opcionális domain-szűrő (pl. 'telex.hu', 'index.hu').",
-    ),
-    date_from: Optional[str] = Query(
-        None,
-        description="Dátum 'tól' (YYYY-MM-DD).",
-    ),
-    date_to: Optional[str] = Query(
-        None,
-        description="Dátum 'ig' (YYYY-MM-DD).",
-    ),
-    limit: int = Query(200, ge=1, le=500),
+    domain: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    q: Optional[str] = None,
+    topic: Optional[str] = None,
+    keyword: Optional[str] = None,
+    entity: Optional[str] = None,     # ← ÚJ
+    limit: int = Query(1000, ge=1),
 ) -> List[SearchResult]:
+
     """
     Meta-alapú keresés/listázás *csak a már adatbázisban lévő cikkekre*.
 
@@ -149,8 +141,12 @@ async def search_db(
         date_from=date_from,
         date_to=date_to,
         q=q,
+        topic=topic,
+        keyword=keyword,
+        entity=entity,        # ← ÚJ
         limit=limit,
     )
+
 
     print(
         f"[TISZA] /api/search domain={domain!r} "
@@ -192,7 +188,7 @@ async def crawl_range(
         None,
         description="Dátum 'ig' (YYYY-MM-DD).",
     ),
-    limit: int = Query(200, ge=1, le=1000),
+    limit: int = Query(1000, ge=1),
 ) -> List[SearchResult]:
     """
     Dinamikus archívum-letöltés domain + dátum intervallum alapján.
@@ -562,7 +558,7 @@ INDEX_HTML = """
       articleEl.innerHTML = '<p class="small">Várakozás a DB-keresés eredményére…</p>';
 
       const params = new URLSearchParams();
-      params.append('limit', '500');
+      params.append('limit', '1000');
       if (q) params.append('q', q);
       if (domain) params.append('domain', domain);
       if (dateFrom) params.append('date_from', dateFrom);
@@ -603,7 +599,7 @@ INDEX_HTML = """
       articleEl.innerHTML = '<p class="small">Intervallum lekérdezése és archívum letöltése…</p>';
 
       const params = new URLSearchParams();
-      params.append('limit', '500');
+      params.append('limit', '1000');
       if (domain) params.append('domain', domain);
       if (dateFrom) params.append('date_from', dateFrom);
       if (dateTo) params.append('date_to', dateTo);

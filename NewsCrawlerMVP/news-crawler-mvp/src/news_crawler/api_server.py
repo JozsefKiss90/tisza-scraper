@@ -18,7 +18,7 @@ DB_PATH_ABS = Path(DB_PATH).resolve()
 DOMAIN_DB_MAP = {
     # ha más a fájlnév/útvonal, itt tudod átírni / env-ből felülírni
     "telex.hu": Path(os.environ.get("TELEX_DB_PATH", "telex_30d.sqlite")).resolve(),
-    "index.hu": Path(os.environ.get("INDEX_DB_PATH", "index_30d.sqlite")).resolve(),
+    "index.hu": Path(os.environ.get("INDEX_DB_PATH", "index_1d.sqlite")).resolve(),
     "444.hu": Path(os.environ.get("FOURFOURFOUR_DB_PATH", "444_30d.sqlite")).resolve(),
     "hvg.hu": Path(os.environ.get("HVG_DB_PATH", "hvg_30d.sqlite")).resolve(),
 }
@@ -110,33 +110,15 @@ async def health() -> dict:
 # -------------------------------------------------
 @app.get("/api/search", response_model=List[SearchResult])
 async def search_db(
-    q: Optional[str] = Query(
-        None,
-        description="Opcionális kulcsszó (title/content LIKE) az adatbázisban.",
-    ),
-    domain: Optional[str] = Query(
-        None,
-        description="Opcionális domain-szűrő (pl. 'telex.hu', 'index.hu').",
-    ),
-    date_from: Optional[str] = Query(
-        None,
-        description="Dátum 'tól' (YYYY-MM-DD).",
-    ),
-    date_to: Optional[str] = Query(
-        None,
-        description="Dátum 'ig' (YYYY-MM-DD).",
-    ),
-    limit: int = Query(200, ge=1, le=1000),
+    domain: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    q: Optional[str] = None,
+    topic: Optional[str] = None,       # ÚJ
+    keyword: Optional[str] = None,     # ÚJ
+    limit: int = Query(1000, ge=1),
 ) -> List[SearchResult]:
-    """
-    Meta-alapú keresés/listázás *csak a már adatbázisban lévő cikkekre*.
-
-    - domain + dátum intervallum opcionális
-    - q opcionális kulcsszó (title/content LIKE)
-    - NEM indít crawl-t, ha nincs találat.
-    """
-
-    # ...
+    crawler = get_crawler_for_domain(domain)
     # ha fordítva vannak, cseréljük fel
     if date_from and date_to and date_from > date_to:
         date_from, date_to = date_to, date_from
@@ -149,6 +131,8 @@ async def search_db(
         date_from=date_from,
         date_to=date_to,
         q=q,
+        topic=topic,        # ezt majd hozzáadod a repo metódushoz
+        keyword=keyword,    # ezt is
         limit=limit,
     )
 
@@ -192,7 +176,7 @@ async def crawl_range(
         None,
         description="Dátum 'ig' (YYYY-MM-DD).",
     ),
-    limit: int = Query(200, ge=1, le=1000),
+    limit: int = Query(1000, ge=1),
 ) -> List[SearchResult]:
     """
     Dinamikus archívum-letöltés domain + dátum intervallum alapján.
